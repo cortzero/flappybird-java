@@ -1,9 +1,11 @@
+import config.WindowConfig;
+
 import javax.swing.*;
 
 public class Main {
 
-    static final int BOARD_WIDTH = 360;
-    static final int BOARD_HEIGHT = 640;
+    static final int BOARD_WIDTH = WindowConfig.BOARD_WIDTH;
+    static final int BOARD_HEIGHT = WindowConfig.BOARD_HEIGHT;
 
     public static void main(String[] args) {
         JFrame frame = new JFrame("Flappy Bird");
