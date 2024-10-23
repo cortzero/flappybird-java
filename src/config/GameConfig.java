@@ -1,0 +1,9 @@
+package config;
+
+public interface GameConfig {
+
+    int FRAMES_PER_SECONDS = 60;
+    int PIPE_INSTANTIATION_TIMER_DELAY = 1500;
+    int MILLISECONDS_DELAY_BETWEEN_FRAMES = 1000/FRAMES_PER_SECONDS;
+
+}

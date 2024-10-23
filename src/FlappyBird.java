@@ -1,16 +1,22 @@
+import config.GameConfig;
+import config.ImagePaths;
+import config.WindowConfig;
+
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
-import java.util.ArrayList;
-import java.util.Iterator;
+import javax.swing.Timer;
+import java.util.*;
 import java.util.List;
-import java.util.Random;
 
 public class FlappyBird extends JPanel implements ActionListener, KeyListener {
 
-    static final int BOARD_WIDTH = 360;
-    static final int BOARD_HEIGHT = 640;
-    static final int FRAMES_PER_SECONDS = 60;
+    final int BOARD_WIDTH = WindowConfig.BOARD_WIDTH;
+    final int BOARD_HEIGHT = WindowConfig.BOARD_HEIGHT;
+    String BACKGROUND_IMG_PATH = ImagePaths.BACKGROUND_IMG_PATH;
+    String FLAPPY_BIRD_IMG_PATH = ImagePaths.FLAPPY_BIRD_IMG_PATH;
+    String TOP_PIPE_IMG_PATH = ImagePaths.TOP_PIPE_IMG_PATH;
+    String BOTTOM_PIPE_IMG_PATH = ImagePaths.BOTTOM_PIPE_IMG_PATH;
 
     // Image variables to hold the images of the game
     Image backgroundImage;
@@ -70,15 +76,14 @@ public class FlappyBird extends JPanel implements ActionListener, KeyListener {
 
     public FlappyBird() {
         setPreferredSize(new Dimension(BOARD_WIDTH, BOARD_HEIGHT));
-        //setBackground(Color.BLUE);
         setFocusable(true);
         addKeyListener(this);
 
         // Loading the image resources
-        backgroundImage = new ImageIcon(getClass().getResource("./flappybirdbg.png")).getImage();
-        birdImage = new ImageIcon(getClass().getResource("./flappybird.png")).getImage();
-        topPipeImage = new ImageIcon(getClass().getResource("./toppipe.png")).getImage();
-        bottomPipeImage = new ImageIcon(getClass().getResource("./bottompipe.png")).getImage();
+        backgroundImage = new ImageIcon(Objects.requireNonNull(getClass().getResource(BACKGROUND_IMG_PATH))).getImage();
+        birdImage = new ImageIcon(Objects.requireNonNull(getClass().getResource(FLAPPY_BIRD_IMG_PATH))).getImage();
+        topPipeImage = new ImageIcon(Objects.requireNonNull(getClass().getResource(TOP_PIPE_IMG_PATH))).getImage();
+        bottomPipeImage = new ImageIcon(Objects.requireNonNull(getClass().getResource(BOTTOM_PIPE_IMG_PATH))).getImage();
 
         // Instantiating the bird
         bird = new Bird(birdImage);
@@ -87,15 +92,15 @@ public class FlappyBird extends JPanel implements ActionListener, KeyListener {
         pipes = new ArrayList<>();
 
         // Instantiating the timer to place the pipes
-        placePipesTimer = new Timer(1500, e -> placePipes());
+        placePipesTimer = new Timer(GameConfig.PIPE_INSTANTIATION_TIMER_DELAY, e -> placePipes());
         placePipesTimer.start();
 
         // Instantiating the game loop
-        gameLoop = new Timer(1000/FRAMES_PER_SECONDS, this); // 1000/60 = 16.6
+        gameLoop = new Timer(GameConfig.MILLISECONDS_DELAY_BETWEEN_FRAMES, this); // 1000/60 = 16.6
         gameLoop.start();
     }
 
-    public void placePipes() {
+    private void placePipes() {
         // random -> {0.0 - 1.0}
         // 0 - 128 - (0-256) --> {1/4 pipeHeight - 3/4 pipeHeight}
         int randomPipeY = (int) (pipeY - (double) pipeHeight/4 - Math.random()*((double) pipeHeight/2));
@@ -119,8 +124,7 @@ public class FlappyBird extends JPanel implements ActionListener, KeyListener {
         draw(g);
     }
 
-    public void draw(Graphics g) {
-
+    private void draw(Graphics g) {
         // Drawing the background image
         g.drawImage(backgroundImage, 0, 0, BOARD_WIDTH, BOARD_HEIGHT, null);
 
@@ -146,7 +150,7 @@ public class FlappyBird extends JPanel implements ActionListener, KeyListener {
         }
     }
 
-    public void move() {
+    private void move() {
         // Moving the bird
         velocityY += gravity;
         bird.y += velocityY;
@@ -180,7 +184,7 @@ public class FlappyBird extends JPanel implements ActionListener, KeyListener {
         }
     }
 
-    public boolean hasCollisionOccurred(Bird bird, Pipe pipe) {
+    private boolean hasCollisionOccurred(Bird bird, Pipe pipe) {
         return  bird.x < pipe.x + pipe.width &&
                 bird.x + bird.width > pipe.x &&
                 bird.y < pipe.y + pipe.height &&
